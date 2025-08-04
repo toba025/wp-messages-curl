@@ -1,0 +1,21 @@
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.env
+
+
+node-persist/
+.node-persist/
+_IGNORE_mi-sesion/
+_IGNORE_session1/
+tokens/
+session*/  # Para evitar carpetas como "session1", "session2", etc.
+
+
+.DS_Store
+*.log
+
+
+.vscode/
+.idea/
