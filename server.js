@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = 8002;
+const TOKEN = "E8t4t5yxuRgP9n3xWaBQbHfKJZCvLmNsTqVuXy2z45a7d9FgHiJkL0MnOpQrStUv";
 
 app.use(bodyParser.json());
 
@@ -34,6 +35,11 @@ venom
     });
 
 app.post('/sendText', async (req, res) => {
+const apiToken = req.header('x-api-token');
+
+if (!apiToken || apiToken !== TOKEN) {
+    return res.status(401).json({ success: false, message: 'Token inválido o ausente' });
+}
   const { to, text } = req.body;
 
   if (!client) {
