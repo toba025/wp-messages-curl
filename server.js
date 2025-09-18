@@ -5,42 +5,28 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 const TOKEN = 'E8t4t5yxuRgP9n3xWaBQbHfKJZCvLmNsTqVuXy2z45a7d9FgHiJkL0MnOpQrStUv';
-
+let clientReady = false;
 
 venom
-    .create(
-        'session1', 
-        undefined, 
-        (status) => {
-            console.log('Status Session: ', status);
-        }, 
-        {
-            headless: "new",
-            useChrome: false,
-            debug: false,
-            logQR: true,
-            browserArgs: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
-    )
-    .then((clientInstance) => {
-        client = clientInstance;
-        clientReady = true;
+  .create('session1', undefined, (status) => {
+      console.log('Status Session: ', status);
+  })
+  .then((c) => {
+      client = c;
 
-        client.onStateChange((state) => {
-            console.log('Estado WhatsApp:', state);
-            if (state === 'CONNECTED') clientReady = true;
-            else clientReady = false;
-        });
+      client.onStateChange((state) => {
+          console.log('Estado WhatsApp:', state);
+          if (state === 'CONNECTED') clientReady = true;
+          else clientReady = false;
+      });
 
-        console.log('✅ Cliente Venom listo y conectado a WhatsApp');
-    })
-    .catch((err) => {
-        console.error('❌ Error inicializando Venom:', err);
-    });
+      console.log('✅ Cliente Venom listo y conectado a WhatsApp');
+  })
+  .catch(console.error);
 
 async function safeSendText(to, text) {
-    if (!clientReady) throw new Error('Cliente no está listo');
-    return await client.sendText(to, text);
+    if (!clientReady) throw new Error('Cliente no está listo o no conectado a WhatsApp');
+    return client.sendText(to, text);
 }
 
 app.post('/sendText', async (req, res) => {
