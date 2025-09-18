@@ -1,48 +1,42 @@
+
 const venom = require('venom-bot');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
+
 const TOKEN = 'E8t4t5yxuRgP9n3xWaBQbHfKJZCvLmNsTqVuXy2z45a7d9FgHiJkL0MnOpQrStUv';
-let clientReady = false;
 
 venom
-  .create('session1', undefined, (status) => {
-      console.log('Status Session: ', status);
+  .create(
+    'session1',
+    undefined,
+    (statusSession) => {
+      console.log('Status Session:', statusSession);
+    },
+    { headless: true }
+  )
+  .then((client) => {
+    console.log('✅ Cliente Venom listo y conectado a WhatsApp');
+
+    app.post('/send-message', async (req, res) => {
+      const { token, number, message } = req.body;
+      if (token !== TOKEN) return res.status(401).json({ error: 'Token inválido' });
+      if (!number || !message) return res.status(400).json({ error: 'Faltan parámetros' });
+
+      try {
+        await client.sendText(`${number}@c.us`, message);
+        res.json({ status: 'Mensaje enviado' });
+      } catch (err) {
+        res.status(500).json({ error: 'Error enviando mensaje', details: err.message });
+      }
+    });
+
+    app.listen(8002, () => {
+      console.log('🌐 Servidor API REST Venom corriendo en puerto 8002');
+    });
   })
-  .then((c) => {
-      client = c;
-
-      client.onStateChange((state) => {
-          console.log('Estado WhatsApp:', state);
-          if (state === 'CONNECTED') clientReady = true;
-          else clientReady = false;
-      });
-
-      console.log('✅ Cliente Venom listo y conectado a WhatsApp');
-  })
-  .catch(console.error);
-
-async function safeSendText(to, text) {
-    if (!clientReady) throw new Error('Cliente no está listo o no conectado a WhatsApp');
-    return client.sendText(to, text);
-}
-
-app.post('/sendText', async (req, res) => {
-    const apiToken = req.header('x-api-token');
-    if (!apiToken || apiToken !== TOKEN) return res.status(401).json({ success: false, message: 'Token inválido' });
-
-    const { to, text } = req.body || {};
-    if (!to || !text) return res.status(400).json({ success: false, message: 'Faltan parámetros "to" o "text"' });
-
-    try {
-        await safeSendText(to, text);
-        res.json({ success: true, message: 'Mensaje enviado' });
-    } catch (err) {
-        console.error('❌ Error enviando mensaje:', err);
-        res.status(500).json({ success: false, message: 'Error enviando mensaje', error: err.toString() });
-    }
-});
-
-app.listen(8002, () => console.log('🌐 Servidor API REST Venom corriendo en puerto 8002'));
+  .catch((err) => {
+    console.error('❌ Error inicializando Venom:', err);
+  });
