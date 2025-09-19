@@ -1,4 +1,4 @@
-
+const fs = require('fs');
 const venom = require('venom-bot');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,6 +7,11 @@ const app = express();
 app.use(bodyParser.json());
 
 const TOKEN = 'E8t4t5yxuRgP9n3xWaBQbHfKJZCvLmNsTqVuXy2z45a7d9FgHiJkL0MnOpQrStUv';
+const BROWSER_PATH = '/usr/bin/google-chrome-stable';
+
+if (!fs.existsSync(BROWSER_PATH)) {
+  console.warn(`WARNING: No se encontró el ejecutable en ${BROWSER_PATH}. Asegurate de instalar Chrome/Chromium o ajustar BROWSER_PATH.`);
+}
 
 venom
   .create(
@@ -15,7 +20,21 @@ venom
     (statusSession) => {
       console.log('Status Session:', statusSession);
     },
-    { headless: true }
+    {
+      headless: true,
+      useChrome: true,
+      browserPathExecutable: BROWSER_PATH,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu'
+      ]
+    }
   )
   .then((client) => {
     console.log('✅ Cliente Venom listo y conectado a WhatsApp');
