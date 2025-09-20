@@ -20,6 +20,6 @@ module.exports = {
     wait_ready: false,
     listen_timeout: 10000,
     restart_delay: 4000,
-    node_args: '--experimental-global-webcrypto --experimental-global-fetch --experimental-global-navigator'
+    node_args: '--max-old-space-size=1024'
   }]
 };
