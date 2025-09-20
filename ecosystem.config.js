@@ -18,6 +18,7 @@ module.exports = {
     kill_timeout: 5000,
     wait_ready: true,
     listen_timeout: 10000,
-    restart_delay: 4000
+    restart_delay: 4000,
+    node_args: '--experimental-global-webcrypto --experimental-global-fetch --experimental-global-navigator'
   }]
 };
