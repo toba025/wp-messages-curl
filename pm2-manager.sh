@@ -5,6 +5,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
 LOG_DIR="$PROJECT_DIR/logs"
 
+# Verificar si estamos en el directorio correcto
+if [ ! -f "server.js" ]; then
+    echo -e "${RED}❌ Error: server.js no encontrado en el directorio actual${NC}"
+    echo "Directorio actual: $(pwd)"
+    echo "Archivos encontrados:"
+    ls -la
+    exit 1
+fi
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
