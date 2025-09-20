@@ -8,6 +8,7 @@ module.exports = {
       DISPLAY: ':99'
     },
     instances: 1,
+    exec_mode: 'fork',
     autorestart: true,
     watch: false,
     max_memory_restart: '1G',
@@ -16,7 +17,7 @@ module.exports = {
     log_file: './logs/combined.log',
     time: true,
     kill_timeout: 5000,
-    wait_ready: true,
+    wait_ready: false,
     listen_timeout: 10000,
     restart_delay: 4000,
     node_args: '--experimental-global-webcrypto --experimental-global-fetch --experimental-global-navigator'
