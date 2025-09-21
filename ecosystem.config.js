@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'whatsapp-bot',
-    script: 'server.js',
+    script: 'server-wajs.js',
     cwd: '/home/ubuntu/wp-messages-curl',
     env: {
       NODE_ENV: 'production',
